@@ -14,7 +14,8 @@ The goal of this project is to send a daily text message with information regard
 ## Deploying
 
 #### Prerequisites
-  - AWS account
+  - AWS account (with credentials configured in development environment)
+  - AWS SAM CLI
   - Twilio account (API token and phone number)
   - AWS S3 Bucket
 
