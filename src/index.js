@@ -51,7 +51,7 @@ const run = async (zipCode, phoneNumber) => {
     zipCodeSevenDayAverageData.percentpositivity_7day
   }
   - The previous average for ${zipCode} was ${previousDay[`   ${zipCode}`]}
-  - Today's average for ${config.burrough} is ${today[config.burrough]}
+  - Today's average for ${config.borough} is ${today[config.borough]}
   - Today's average citywide is ${today.Citywide}`;
   await sendMessage(phoneNumber, summary);
 };
