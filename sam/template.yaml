@@ -1,0 +1,14 @@
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  CoronaNotificationFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../src/
+      Handler: index.handler
+      Runtime: nodejs12.x
+      Events:
+        SendUpdateEvent:
+          Type: Schedule
+          Properties:
+            Schedule: cron(00 15 * * ? *)

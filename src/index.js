@@ -3,10 +3,10 @@ const axios = require('axios');
 const parse = require('csv-parse/lib/sync');
 const sendMessage = require('./text.js');
 
-index.handler = async () => {
+exports.handler = async (event) => {
   try {
     await run('10019', '+14054302414');
-    console.log('Success');
+    console.log('Success!');
   } catch (error) {
     console.log(error);
   }
@@ -46,9 +46,11 @@ const run = async (zipCode, phoneNumber) => {
   const previousDay = getDay(rawDailyPercentPositiveData, 2);
   const today = getDay(rawDailyPercentPositiveData, 1);
   const summary = `Coronavirus 7-day Rolling Average Update:
-  - Today's average for ${zipCode} is ${zipCodeSevenDayAverageData.percentpositivity_7day}
-  - The previous average for ${zipCode} was ${previousDay[zipCode]}
+  - Today's average for ${zipCode} is ${
+    zipCodeSevenDayAverageData.percentpositivity_7day
+  }
+  - The previous average for ${zipCode} was ${previousDay[`   ${zipCode}`]}
   - Today's average for Manhattan is ${today.Manhattan}
   - Today's average citywide is ${today.Citywide}`;
-  sendMessage(phoneNumber, summary);
+  await sendMessage(phoneNumber, summary);
 };
