@@ -1,15 +1,15 @@
 {
   "name": "corona-notification",
   "version": "1.0.0",
-  "description": "daily percent positive notification system",
+  "description": "AWS SAM application that sends coronavirus 7 day rolling average percent positive stats based on an NYC zip code using Twilio",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "package": "./scripts/package.sh",
     "deploy": "./scripts/deploy.sh"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Josh Sohn",
+  "license": "GNU GPLv3",
   "dependencies": {
   }
 }

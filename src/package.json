@@ -1,13 +1,13 @@
 {
   "name": "corona-notification-lambda",
   "version": "1.0.0",
-  "description": "",
+  "description": "Lambda function that sends coronavirus 7 day rolling average percent positive stats based on an NYC zip code using Twilio",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Josh Sohn",
-  "license": "ISC",
+  "license": "GNU GPLv3",
   "dependencies": {
     "axios": "^0.21.0",
     "csv-parse": "^4.14.1",

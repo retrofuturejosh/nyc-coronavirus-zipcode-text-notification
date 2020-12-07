@@ -2,10 +2,11 @@ require('dotenv').config();
 const axios = require('axios');
 const parse = require('csv-parse/lib/sync');
 const sendMessage = require('./text.js');
+const config = require('./config');
 
 exports.handler = async (event) => {
   try {
-    await run('10019', '+14054302414');
+    await run(config.zipCode, config.phoneNumber);
     console.log('Success!');
   } catch (error) {
     console.log(error);
