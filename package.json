@@ -10,6 +10,5 @@
   },
   "author": "Josh Sohn",
   "license": "GNU GPLv3",
-  "dependencies": {
-  }
+  "dependencies": {}
 }

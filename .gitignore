@@ -1,4 +1,5 @@
 sam/package.yaml
+*samconfig.toml
 
 # Logs
 logs

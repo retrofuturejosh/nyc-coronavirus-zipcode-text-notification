@@ -9,9 +9,5 @@
   "author": "Josh Sohn",
   "license": "GNU GPLv3",
   "dependencies": {
-    "axios": "^0.21.0",
-    "csv-parse": "^4.14.1",
-    "dotenv": "^8.2.0",
-    "twilio": "^3.53.0"
   }
 }

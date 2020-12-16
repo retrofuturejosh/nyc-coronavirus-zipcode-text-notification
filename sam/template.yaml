@@ -1,14 +1,154 @@
 AWSTemplateFormatVersion : '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
+Parameters:
+  twilioAccountSID:
+    Type: String
+  twilioAuthToken:
+    Type: String
+  twilioNumber:
+    Type: String
 Resources:
-  CoronaNotificationFunction:
+  SendTextMessageLambda:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../src/
+      CodeUri: ../src/SendTextMessageLambda
       Handler: index.handler
       Runtime: nodejs12.x
+      Timeout: 900
+      Layers:
+        - !Ref CommonLayer
+      Environment:
+        Variables:
+          TWILIO_ACCOUNT_SID: !Ref twilioAccountSID
+          TWILIO_AUTH_TOKEN: !Ref twilioAuthToken
+          TWILIO_NUMBER: !Ref twilioNumber
+          AWS: true
+      Events:
+        MySQSEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt CoronaQueue.Arn
+            BatchSize: 1
+  AddNumberLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../src/addNumberLambda
+      Handler: index.handler
+      Runtime: nodejs12.x
+      Timeout: 10
+      Layers:
+        - !Ref CommonLayer
+      Environment:
+        Variables:
+          TWILIO_ACCOUNT_SID: !Ref twilioAccountSID
+          TWILIO_AUTH_TOKEN: !Ref twilioAuthToken
+          TWILIO_NUMBER: !Ref twilioNumber
+          AWS: true
+      Policies:
+        - AmazonDynamoDBFullAccess
+      Events:
+        AddNumber:
+            Type: Api
+            Properties:
+                Path: /phoneNumber
+                Method: post
+  DeleteNumberLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../src/deleteNumberLambda
+      Handler: index.handler
+      Runtime: nodejs12.x
+      Timeout: 10
+      Layers:
+        - !Ref CommonLayer
+      Policies:
+        - AmazonDynamoDBFullAccess
+      Environment:
+        Variables:
+          AWS: true
+      Events:
+        DeleteNumber:
+            Type: Api
+            Properties:
+                Path: /phoneNumber
+                Method: delete
+  FanOutSQSLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../src/fanOutSQSLambda
+      Handler: index.handler
+      Runtime: nodejs12.x
+      Role: !GetAtt FanOutLambdaRole.Arn
+      Timeout: 900
+      Layers:
+        - !Ref CommonLayer
+      Environment:
+        Variables:
+          AWS: true
       Events:
         SendUpdateEvent:
           Type: Schedule
           Properties:
             Schedule: cron(00 15 * * ? *)
+  CommonLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+        LayerName: coronavirus-shared-lib
+        Description: Shared libraries for coronavirus notification lambdas
+        ContentUri: ../src/layer/
+        CompatibleRuntimes:
+          - nodejs12.x
+        LicenseInfo: 'MIT'
+        RetentionPolicy: Retain
+  CoronaNotificationTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      TableName: corona-notification
+      PrimaryKey:
+        Name: phoneNumber
+        Type: String
+      Tags:
+        AppType: Serverless
+  CoronaQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: corona-queue.fifo
+      FifoQueue: true
+  FanOutLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          -
+            Effect: Allow
+            Principal:
+              Service:
+                - 'lambda.amazonaws.com'
+            Action:
+              - 'sts:AssumeRole'
+      Policies:
+        -
+          PolicyName: 'FullSQSLambdaAccessPolicy'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              -
+                Effect: Allow
+                Action:
+                  - 'sqs:*'
+                Resource: '*'
+        -
+          PolicyName: 'FullDynamoLambdaAccessPolicy'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              -
+                Effect: Allow
+                Action:
+                  - 'dynamodb:Scan'
+                Resource: !GetAtt CoronaNotificationTable.Arn
+Outputs:
+  CoronaNotificationPhoneNumberAPI:
+    Description: "API Gateway endpoint URL for Prod stage for Phone Number"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/phoneNumber/"
