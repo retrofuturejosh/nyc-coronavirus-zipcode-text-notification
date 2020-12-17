@@ -86,8 +86,12 @@ export default function Subscribe() {
     setBorough(event.target.value);
   };
   const handleZipCode = (event, value) => {
-    setZipCode(value.zipCode);
-    setZipCodeError(false);
+    if (value) {
+      setZipCode(value.zipCode);
+      setZipCodeError(false);
+    } else {
+      setZipCode('');
+    }
   };
 
   return (
@@ -127,6 +131,8 @@ export default function Subscribe() {
                 className={classes.input}
                 id="zipCode"
                 options={validZipCodes}
+                autoSelect
+                autoHighlight
                 style={{ width: '10em' }}
                 getOptionLabel={(option) => option.zipCode}
                 onChange={handleZipCode}
