@@ -8,7 +8,7 @@ import Notification from './Notification';
 
 export default function Routes() {
   return (
-    <Router>
+    <Router basename={process.env.PUBLIC_URL}>
       <Switch>
         <Route path="/subscribe">
           <Subscribe />
