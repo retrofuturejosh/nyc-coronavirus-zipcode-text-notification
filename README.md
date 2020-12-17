@@ -5,6 +5,7 @@ The goal of this project is to send a daily text message with information regard
 
 ### Tech Stack:
   - Node.js
+  - React
   - AWS
     - SAM
     - Lambda (with Lambda Layer)
