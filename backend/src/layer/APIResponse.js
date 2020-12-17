@@ -9,37 +9,42 @@ class APIResponse {
     const body = {
       status: this.status,
       ...this.requestBody,
-    }
+    };
     if (this.errorMessage) {
-      body.errorMessage = this.errorMessage
+      body.errorMessage = this.errorMessage;
     }
     return {
       statusCode: this.statusCode,
-      body: JSON.stringify(body)
-    }
+      body: JSON.stringify(body),
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': '*',
+        'Access-Control-Allow-Methods': '*',
+      },
+    };
   }
 }
 
 class SuccessResponse extends APIResponse {
   constructor(requestBody) {
-    super(200, 'Success', requestBody)
+    super(200, 'Success', requestBody);
   }
 }
 
 class ClientErrorResponse extends APIResponse {
   constructor(requestBody, errorMessage) {
-    super(400, 'Failure', requestBody, errorMessage)
+    super(400, 'Failure', requestBody, errorMessage);
   }
 }
 
 class ServerErrorResponse extends APIResponse {
   constructor(requestBody, errorMessage) {
-    super(500, 'Failure', requestBody, errorMessage)
+    super(500, 'Failure', requestBody, errorMessage);
   }
 }
 
 module.exports = {
   SuccessResponse,
   ServerErrorResponse,
-  ClientErrorResponse
+  ClientErrorResponse,
 };
